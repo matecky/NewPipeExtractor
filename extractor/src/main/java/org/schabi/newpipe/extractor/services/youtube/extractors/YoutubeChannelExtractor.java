@@ -208,6 +208,10 @@ public class YoutubeChannelExtractor extends ChannelExtractor {
                         .filter(itm -> itm.has("topicChannelDetailsRenderer"))
                         .findFirst()
                         .map(itm -> itm.getObject("topicChannelDetailsRenderer"));
+            } else if (h.has("pageHeaderRenderer")) {
+                channelHeader = Optional.of(h.getObject("pageHeaderRenderer"));
+            } else if (h.has("interactiveTabbedHeaderRenderer")) {
+                channelHeader = Optional.of(h.getObject("interactiveTabbedHeaderRenderer"));
             } else {
                 channelHeader = Optional.empty();
             }
