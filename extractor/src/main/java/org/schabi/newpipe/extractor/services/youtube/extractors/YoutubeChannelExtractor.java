@@ -276,38 +276,26 @@ public class YoutubeChannelExtractor extends ChannelExtractor {
 
     @Override
     public String getAvatarUrl() throws ParsingException {
-        final Optional<JsonObject> header = getChannelHeader();
-        if (header.isPresent()) {
-            String textObject = "";
 
+        return getChannelHeader().flatMap(header -> {
             if (header.get().has("avatar")) {
-                textObject = header.get().getObject("avatar").getArray("thumbnails")
+                return header.get().getObject("avatar").getArray("thumbnails")
                                 .getObject(0).getString("url")
             } else if (header.get().has("boxArt")) {
-                textObject = header.get().getObject("boxArt").getArray("thumbnails")
+                return header.get().getObject("boxArt").getArray("thumbnails")
                                 .getObject(0).getString("url")
             } else if (header.get().has("content")) {
-                textObject = header.get().getObject("content")
+                return header.get().getObject("content")
                             .getObject("pageHeaderViewModel")
                             .getObject("image")
                             .getObject("contentPreviewImageViewModel")
                             .getObject("image")
                             .getArray("sources").getObject(0).getString("url");
             }
-            if (textObject != "") {
-                try {
-                    return YoutubeParsingHelper.fixThumbnailUrl(textObject);
-                } catch (final ParsingException e) {
-                    throw new ParsingException(""Could not get avatar"", e);
-                }
-            } else {
-                return ""
-            }
-        } else {
-            return ""
-        }
-        
-        
+
+        })
+                .map(YoutubeParsingHelper::fixThumbnailUrl)
+                .orElseThrow(() -> new ParsingException("Could not get avatar"));
     }
 
     @Override
