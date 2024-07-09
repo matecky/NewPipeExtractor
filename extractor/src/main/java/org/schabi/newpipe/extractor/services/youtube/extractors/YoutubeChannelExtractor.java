@@ -278,39 +278,36 @@ public class YoutubeChannelExtractor extends ChannelExtractor {
     public String getAvatarUrl() throws ParsingException {
         final Optional<JsonObject> header = getChannelHeader();
         if (header.isPresent()) {
-            JsonObject textObject = null;
+            String textObject = "";
 
             if (header.get().has("avatar")) {
-                return getChannelHeader().flatMap(header -> Optional.ofNullable(
-                        header.getObject("avatar").getArray("thumbnails")
-                                .getObject(0)
-                ))
-                .map(YoutubeParsingHelper::fixThumbnailUrl)
-                .orElseThrow(() -> new ParsingException("Could not get avatar"));
-
+                textObject = header.get().getObject("avatar").getArray("thumbnails")
+                                .getObject(0).getString("url")
             } else if (header.get().has("boxArt")) {
-                return getChannelHeader().flatMap(header -> Optional.ofNullable(
-                        header.getObject("boxArt").getArray("thumbnails")
-                                .getObject(0)
-                ))
-                .map(YoutubeParsingHelper::fixThumbnailUrl)
-                .orElseThrow(() -> new ParsingException("Could not get avatar"));
-            }
-            else if (header.get().has("content")) {
-                return getChannelHeader().flatMap(header -> Optional.ofNullable(
-                        header.getObject("content")
+                textObject = header.get().getObject("boxArt").getArray("thumbnails")
+                                .getObject(0).getString("url")
+            } else if (header.get().has("content")) {
+                textObject = header.get().getObject("content")
                             .getObject("pageHeaderViewModel")
                             .getObject("image")
                             .getObject("contentPreviewImageViewModel")
                             .getObject("image")
-                            .getArray("sources").getObject(0);
-                ))
-                .map(YoutubeParsingHelper::fixThumbnailUrl)
-                .orElseThrow(() -> new ParsingException("Could not get avatar"));
+                            .getArray("sources").getObject(0).getString("url");
             }
-        else {
+            if (textObject != "") {
+                try {
+                    return YoutubeParsingHelper.fixThumbnailUrl(textObject);
+                } catch (final ParsingException e) {
+                    throw new ParsingException(""Could not get avatar"", e);
+                }
+            } else {
+                return ""
+            }
+        } else {
             return ""
         }
+        
+        
     }
 
     @Override
