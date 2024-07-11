@@ -276,24 +276,10 @@ public class YoutubeChannelExtractor extends ChannelExtractor {
 
     @Override
     public String getAvatarUrl() throws ParsingException {
-
-        return getChannelHeader().flatMap(header -> {
-            if (header.get().has("avatar")) {
-                return header.get().getObject("avatar").getArray("thumbnails")
+        return getChannelHeader().flatMap(header -> Optional.ofNullable(
+                        header.getObject("avatar").getArray("thumbnails")
                                 .getObject(0).getString("url")
-            } else if (header.get().has("boxArt")) {
-                return header.get().getObject("boxArt").getArray("thumbnails")
-                                .getObject(0).getString("url")
-            } else if (header.get().has("content")) {
-                return header.get().getObject("content")
-                            .getObject("pageHeaderViewModel")
-                            .getObject("image")
-                            .getObject("contentPreviewImageViewModel")
-                            .getObject("image")
-                            .getArray("sources").getObject(0).getString("url");
-            }
-
-        })
+                ))
                 .map(YoutubeParsingHelper::fixThumbnailUrl)
                 .orElseThrow(() -> new ParsingException("Could not get avatar"));
     }
