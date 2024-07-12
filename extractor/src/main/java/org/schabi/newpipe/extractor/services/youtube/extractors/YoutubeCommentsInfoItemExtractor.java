@@ -32,14 +32,14 @@ public class YoutubeCommentsInfoItemExtractor implements CommentsInfoItemExtract
     }
 
     private JsonObject getCommentRenderer() throws ParsingException {
-        if (commentRenderer == null) {
-            if (json.has("comment")) {
-                commentRenderer = JsonUtils.getObject(json, "comment.commentRenderer");
-            } else {
-                commentRenderer = json;
-            }
-        }
-        return commentRenderer;
+//       if (commentRenderer == null) {
+//            if (json.has("comment")) {
+//               commentRenderer = JsonUtils.getObject(json, "comment.commentRenderer");
+//           } else {
+//              commentRenderer = json;
+//         }
+//     }
+        return json;
     }
 
     @Override
