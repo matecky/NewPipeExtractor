@@ -90,7 +90,7 @@ public final class YoutubeThrottlingDecrypter {
              */
             Pattern.compile("\\.get\\(\"n\"\\)\\)&&\\(" + SINGLE_CHAR_VARIABLE_REGEX
                     + "=(" + FUNCTION_NAME_REGEX + ")(?:" + ARRAY_ACCESS_REGEX + ")?\\("
-                    + SINGLE_CHAR_VARIABLE_REGEX + "\\)")
+                    + SINGLE_CHAR_VARIABLE_REGEX + "\\)"),
                     
             /*
              * The fifth regex matches the following text, where we want oDa and the array index
